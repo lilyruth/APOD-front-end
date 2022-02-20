@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
-import { createTheme, Button, Card, CardActions, CardContent, CardMedia, Divider, Link, Typography } from '@mui/material';
+import { createTheme, AppBar, Backdrop, Button, Card, CardActions, CardContent, CardMedia, CircularProgress, Divider, Link, Typography } from '@mui/material';
 import axios from 'axios';
 
+
+ 
 const theme = createTheme({
   components: {
     MuiCardMedia: {
@@ -50,6 +52,28 @@ const theme = createTheme({
           marginBottom: '10px'
         }
       }
+    },
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          background: 'black',
+          padding: '1rem',
+          color: 'lavender',
+          height: '7rem',
+          fontSize: '3rem',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }
+      }
+    },
+    MuiCircularProgress: {
+      styleOverrides: {
+        root: {
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          justifyContent: 'center'
+        }
+      }
     }
   }
 });
@@ -57,15 +81,28 @@ const theme = createTheme({
 function Data() {
 
  const [apodInfo, setApodInfo] = useState([]);
+ const [loading, setLoading] = useState(true);
+ 
+ console.log(loading)
 
  useEffect(() => {
    async function fetchAPOD() {
-    const request = await axios.get('/api')
+    const request = await axios.get('https://apodproxy.herokuapp.com/api')
     .catch(console.log())
     setApodInfo(request.data);
    }
    fetchAPOD();
  }, []);
+
+ useEffect(() => {
+   const timer = setTimeout(() => {
+    if (apodInfo) {
+      setLoading(false)
+    }
+   }, 1000);
+   return () => clearTimeout(timer);
+ }, [apodInfo])
+ console.log(loading)
 
  let list = apodInfo.map((item, index) => 
   ( 
@@ -81,7 +118,7 @@ function Data() {
  
           <Typography 
             gutterBottom
-            variant="h4"
+            variant="h5"
             align="center"
             component="div">
               {item.title}
@@ -121,19 +158,32 @@ function Data() {
 )
 
  return (
-    <>  
-    <Typography 
-        variant="h1"
-        align="center"
-        component="div">
-        NASA Photo of the Day
-      </Typography>
+    <>
+    { loading ? 
+     <ThemeProvider theme={theme}> 
+      <Backdrop
+        open={true}>
+        <CircularProgress
+         color="secondary" />
+
+      </Backdrop>
+    </ThemeProvider> : null
+    }
+      <ThemeProvider theme={theme}> 
+        <AppBar>
+          <Typography
+           variant="h4">
+            NASA Photo of the Day
+          </Typography>
+        </AppBar> 
+      </ThemeProvider>
       <div style={{
         display: 'flex',
         justifyContent: 'center',
         flexWrap: 'wrap',
         marginLeft: 'auto',
-        marginRight: 'auto'
+        marginRight: 'auto',
+        marginTop: '8rem'
       }}>{list}</div>
     </>
   )
