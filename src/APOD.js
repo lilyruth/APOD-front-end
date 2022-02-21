@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import { createTheme, AppBar, Backdrop, Button, Card, CardActions, CardContent, CardMedia, CircularProgress, Divider, Link, Typography } from '@mui/material';
+import BottomBar from './BottomBar';
 import axios from 'axios';
 
 
@@ -74,6 +75,16 @@ const theme = createTheme({
           justifyContent: 'center'
         }
       }
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          marginTop: 10,
+          marginBottom: 10,
+          marginLeft: 'auto',
+          marginRight: 'auto'
+        }
+      }
     }
   }
 });
@@ -82,16 +93,18 @@ function Data() {
 
  const [apodInfo, setApodInfo] = useState([]);
  const [loading, setLoading] = useState(true);
- 
- console.log(loading)
+
+ const load = () => {
+  async function fetchAPOD() {
+   const request = await axios.get('https://apodproxy.herokuapp.com/api')
+   .catch(console.log())
+   setApodInfo(request.data);
+  }
+  fetchAPOD();
+}
 
  useEffect(() => {
-   async function fetchAPOD() {
-    const request = await axios.get('https://apodproxy.herokuapp.com/api')
-    .catch(console.log())
-    setApodInfo(request.data);
-   }
-   fetchAPOD();
+  load()
  }, []);
 
  useEffect(() => {
@@ -102,6 +115,7 @@ function Data() {
    }, 1000);
    return () => clearTimeout(timer);
  }, [apodInfo])
+
  console.log(loading)
 
  let list = apodInfo.map((item, index) => 
@@ -147,6 +161,7 @@ function Data() {
             underline="hover"
             variant="body1"
             href={item.hdurl}
+            target="_blank"
              >
               Go to the high-def image
            </Link>
@@ -176,7 +191,7 @@ function Data() {
             NASA Photo of the Day
           </Typography>
         </AppBar> 
-      </ThemeProvider>
+ 
       <div style={{
         display: 'flex',
         justifyContent: 'center',
@@ -185,6 +200,19 @@ function Data() {
         marginRight: 'auto',
         marginTop: '8rem'
       }}>{list}</div>
+
+        <div style={{ display: "flex" }}>
+          <Button
+            variant="contained"
+            color="secondary"
+            aria-label="reload"
+            onClick={() => {
+              load()
+            }}
+            >Fetch More Stars</Button>
+        </div>
+        </ThemeProvider>
+      <BottomBar />
     </>
   )
 
