@@ -25,7 +25,7 @@ function BottomBar () {
         href="https://apod.nasa.gov/apod/lib/about_apod.html"
         target="_blank"
          >
-        NASA Astronomy Picture of the Day Official Page
+        Go to NASA Astronomy Picture of the Day Official Page
       </Link>
   </div>
  )

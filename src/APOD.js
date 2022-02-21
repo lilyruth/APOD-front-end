@@ -207,7 +207,8 @@ function Data() {
             color="secondary"
             aria-label="reload"
             onClick={() => {
-              load()
+              load();
+              window.scroll(0,0);
             }}
             >Fetch More Stars</Button>
         </div>
